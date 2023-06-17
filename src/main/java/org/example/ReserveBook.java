@@ -3,91 +3,57 @@ package org.example;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class BookStore {
-    ArrayList<Book> books;
-    Scanner scanner;
+public class ReserveBook {
+    private ArrayList<Book> books;
+    private Scanner scanner;
 
-    BookStore() {
-        // Initialize the ArrayList of books with specific titles
-        this.books = new ArrayList<>();
-        books.add(new Book("Ten brothers"));
-        books.add(new Book("Nice day"));
-        books.add(new Book("How are you?"));
-        books.add(new Book("Where is the pilot?"));
-        books.add(new Book("That's not nice"));
-        books.add(new Book("Six dogs and a cat"));
-        books.add(new Book("Tomorrow is today"));
-        books.add(new Book("Almost there"));
-        books.add(new Book("Not sure what's next"));
-        books.add(new Book("Finally, the end"));
+    public ReserveBook(ArrayList<Book> books) {
+        this.books = books;
         this.scanner = new Scanner(System.in);
     }
 
-    void run() {
+    public void run() {
         while (true) {
-            // Print the list of books
-            printBooks();
-            reserveBook();
-        }
-    }
-
-    void printBooks() {
-        System.out.println("Here are the books available:");
-        for (int i = 0; i < books.size(); i++) {
-            System.out.println((i + 1) + ". " + books.get(i));
-        }
-    }
-
-    void reserveBook() {
-        while (true) {
-            System.out.println("Enter the number of the book you want to reserve or 'Q' to quit:");
-
-            // Read the book number or quit command
+            showBooks();
+            System.out.println("Enter the number of the book you want to reserve, 'M' to go back to the main menu, or 'Q' to quit:");
             String input = scanner.nextLine();
-
-            if ("Q".equalsIgnoreCase(input)) {
-                System.out.println("Exiting the program. Thank you!");
+            if (input.equalsIgnoreCase("Q")) {
+                System.out.println("Thank you! Goodbye.");
                 System.exit(0);
-            }
-
-            // Try to parse the book number and reserve the book
-            try {
-                int bookNumber = Integer.parseInt(input) - 1;
-
-                // Validate the book number
-                if (bookNumber < 0 || bookNumber >= books.size()) {
-                    System.out.println("Invalid book number. Please try again.");
-                    continue;
-                }
-
-                Book book = books.get(bookNumber);
-                if (book.isReserved) {
-                    System.out.println("The book is already reserved. Please try again.");
-                } else {
-                    book.isReserved = true;
-                    System.out.println("You have successfully reserved the book.");
-                    System.out.println("Do you want to reserve another book? Enter 'Yes' or 'No':");
-                    String response = scanner.nextLine();
-                    if ("No".equalsIgnoreCase(response)) {
-                        System.out.println("You have chosen not to reserve another book.");
-                        System.out.println("Press any key to continue or 'Q' to quit:");
-                        String quitKey = scanner.nextLine();
-                        if ("Q".equalsIgnoreCase(quitKey)) {
-                            System.out.println("Exiting the program. Thank you!");
-                            System.exit(0);
+            } else if (input.equalsIgnoreCase("M")) {
+                break; // break the loop and go back to the main menu
+            } else {
+                try {
+                    int bookNumber = Integer.parseInt(input);
+                    if (bookNumber < 1 || bookNumber > books.size()) {
+                        System.out.println("Invalid number. Please try again.");
+                    } else if (books.get(bookNumber - 1).isReserved) {
+                        System.out.println("The book is already reserved.");
+                    } else {
+                        books.get(bookNumber - 1).isReserved = true;
+                        System.out.println("You've successfully reserved the book: " + books.get(bookNumber - 1).title);
+                        System.out.println("Do you want to reserve another book? 'Yes' or 'No'.");
+                        String inputAnotherBook = scanner.nextLine();
+                        if(inputAnotherBook.equalsIgnoreCase("Yes")){
+                            System.out.println("Reserve another book.");
+                        }else if(inputAnotherBook.equalsIgnoreCase("No")){
+                            break;
                         }
                     }
-                    break; // Breaks the loop if a book was reserved successfully
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input. Please enter a number, 'M' to go back to the main menu, or 'Q' to quit.");
                 }
-
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a valid book number or 'Q' to quit.");
             }
         }
     }
 
-    void addBook(String title) {
-        books.add(new Book(title));
+    private void showBooks() {
+        System.out.println("\nHere are the books available:");
+        for (int i = 0; i < books.size(); i++) {
+            Book book = books.get(i);
+            System.out.println((i + 1) + ". " + book.title + " (Reserved: " + book.isReserved + ")");
+        }
     }
 }
+
 
